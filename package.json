@@ -5,11 +5,10 @@
   "scripts": {
     "start": "node dist/index.js",
     "build": "tsc",
-    "dev": "nodemon index.js"
+    "dev": "ts-node-dev src/index.ts"
   },
   "keywords": [],
-  "type": "module",
-  "author": "",
+  "author": "Keshav Agrawal",
   "license": "ISC",
   "description": "",
   "dependencies": {
