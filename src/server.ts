@@ -6,7 +6,7 @@ import swaggerUi from "swagger-ui-express";
 import { swagger } from "./configs";
 import path from "path";
 
-export const app = express();
+const app = express();
 app.use(express.json());
 app.use(cors());
 app.use("/images", express.static(path.join(__dirname, "images")));
@@ -28,4 +28,4 @@ app.use(
   })
 );
 
-module.exports = app;
+export default app;
