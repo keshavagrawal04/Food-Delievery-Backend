@@ -172,8 +172,9 @@ export const addFood = async (req: vendorDto.VendorRequest, res: Response) => {
 
     const files = req.files as [Express.Multer.File];
     const paths = files.map((file: Express.Multer.File) => file.path);
-    const images = paths.map(async (path) => await cloudinary.upload(path));
-
+    const uploadPromises = paths.map((path) => cloudinary.upload(path));
+    const images = await Promise.all(uploadPromises);
+  
     const food = await foodServices.saveFood(
       user.vendorId,
       { ...foodDetails, images },
