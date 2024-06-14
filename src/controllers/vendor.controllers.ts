@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { foodDto, vendorDto } from "../dto";
 import { vendorServices, foodServices } from "../services";
-import { crypto, jwt } from "../utils";
+import { cloudinary, crypto, jwt } from "../utils";
 
 export const vendorLogin = async (req: Request, res: Response) => {
   try {
@@ -171,7 +171,8 @@ export const addFood = async (req: vendorDto.VendorRequest, res: Response) => {
       return res.status(404).json({ message: "Vendor Information Not Found" });
 
     const files = req.files as [Express.Multer.File];
-    const images = files.map((file: Express.Multer.File) => file.filename);
+    const paths = files.map((file: Express.Multer.File) => file.path);
+    const images = paths.map(async (path) => await cloudinary.upload(path));
 
     const food = await foodServices.saveFood(
       user.vendorId,

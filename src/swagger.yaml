@@ -4,16 +4,57 @@ info:
   description: API documentation for the Food Delivery application.
   version: 1.0.0
 servers:
-  - url: http://locahost:8000
-    description: Local server
-  - url: ${{server}}
-    description: Production server
+- url: ${{server}}
 paths:
+  # Admin - Vendor Get By id
+  /admin/vendor/{id}:
+    get:
+      summary: Retrieve a vendor by ID
+      tags:
+      - 👨‍💼 Admin
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Vendor data retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  vendor:
+                    $ref: "#/components/schemas/Vendor"
+        "404":
+          description: Vendor not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  # Admin - Add Vendor
   /admin/vendor:
     post:
-      tags:
-        - Admin
       summary: Create a new vendor
+      tags:
+      - 👨‍💼 Admin
       requestBody:
         required: true
         content:
@@ -52,11 +93,13 @@ paths:
                     type: string
                   error:
                     type: string
+
+  # Admin - Vendors Get
   /admin/vendors:
     get:
-      tags:
-        - Admin
       summary: Retrieve all vendors
+      tags:
+      - 👨‍💼 Admin
       responses:
         "200":
           description: Vendors data retrieved successfully
@@ -82,20 +125,21 @@ paths:
                     type: string
                   error:
                     type: string
-  /admin/vendor/{id}:
-    get:
+  # Vendor - Vendor Login
+  /vendor/login:
+    post:
+      summary: Vendor login
       tags:
-        - Admin
-      summary: Retrieve a vendor by ID
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
+      - 👨‍🍳 Vendor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VendorLoginInput"
       responses:
         "200":
-          description: Vendor data retrieved successfully
+          description: Vendor logged in successfully
           content:
             application/json:
               schema:
@@ -104,9 +148,25 @@ paths:
                   message:
                     type: string
                   vendor:
-                    $ref: "#/components/schemas/Vendor"
+                    type: object
+                    properties:
+                      vendorId:
+                        type: string
+                      email:
+                        type: string
+                  tokens:
+                    type: object
+        "400":
+          description: Password mismatch
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
         "404":
-          description: Vendor not found
+          description: Vendor with this email is not found
           content:
             application/json:
               schema:
@@ -123,9 +183,464 @@ paths:
                 properties:
                   message:
                     type: string
-                  error:
+  # Vendor - Vendor Profile View
+  /vendor/profile:
+    get:
+      summary: Get vendor profile
+      tags:
+      - 👨‍🍳 Vendor
+      security:
+      - BearerAuth: []
+      responses:
+        "200":
+          description: Vendor profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
                     type: string
+                  vendor:
+                    $ref: "#/components/schemas/Vendor"
+        "404":
+          description: Unauthorized user or vendor information not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+    # Vendor - Vendor Profile Update
+    /vendor/profile:
+    patch:
+      summary: Update vendor profile
+      tags:
+      - 👨‍🍳 Vendor
+      security:
+      - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VendorUpdateInput"
+      responses:
+        "200":
+          description: Vendor profile updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "404":
+          description: Unauthorized user or vendor information not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  # Vendor - Vendor Cover Image Update
+  /vendor/coverImages:
+    patch:
+      summary: Update vendor cover images
+      tags:
+      - 👨‍🍳 Vendor
+      security:
+      - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                coverImages:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                    description: Array of image files to upload
+              required:
+              - coverImages
+      responses:
+        "200":
+          description: Vendor cover images updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "404":
+          description: Unauthorized user or vendor information not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  # Vendor - Vendor Service Update
+  /vendor/service:
+    patch:
+      summary: Update vendor service availability
+      tags:
+      - 👨‍🍳 Vendor
+      security:
+      - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                serviceAvailable:
+                  type: boolean
+              required:
+              - serviceAvailable
+      responses:
+        "200":
+          description: Vendor service updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "404":
+          description: Unauthorized user or vendor information not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  # Vendor - Add Food Item
+  /vendor/food:
+    post:
+      summary: Add food item
+      tags:
+      - 👨‍🍳 Vendor
+      security:
+      - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/CreateFoodInput"
+      responses:
+        "200":
+          description: Food added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "404":
+          description: Unauthorized user or vendor information not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  # Vendor - Vendors Food Get
+  /vendor/foods:
+    get:
+      summary: Get all foods by vendor
+      tags:
+      - 👨‍🍳 Vendor
+      security:
+      - BearerAuth: []
+      responses:
+        "200":
+          description: Foods data retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  foods:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Food"
+        "404":
+          description: Unauthorized user or vendor information not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  # Shopping - Checks Vendor Availability
+  /:pincode:
+    get:
+      summary: Get available vendors by pincode
+      tags:
+      - 🛒 Shopping
+      parameters:
+      - in: path
+        name: pincode
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Available vendors data retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  vendors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Vendor'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  # Shopping - Finds Top Restaurants
+  /top-restaurants/{pincode}:
+    get:
+      summary: Get top restaurants by pincode
+      tags:
+      - 🛒 Shopping
+      parameters:
+      - in: path
+        name: pincode
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Top restaurants data retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  vendors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Vendor'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  # Shopping - Finds Which Food Is Ready In 30 Minutes
+  /foods-in-30-min/{pincode}:
+    get:
+      summary: Get foods available in 30 minutes by pincode
+      tags:
+      - 🛒 Shopping
+      parameters:
+      - in: path
+        name: pincode
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Foods available in 30 minutes retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  vendors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Food'
+        '404':
+          description: Foods in 30 minutes not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  # Shopping - Search For Vendors
+  /search/{pincode}:
+    get:
+      summary: Search foods by pincode
+      tags:
+      - 🛒 Shopping
+      parameters:
+      - in: path
+        name: pincode
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Foods data retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  foods:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Food'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  # Shopping - Find Restaurant By Id
+  /restaurant/{id}:
+    get:
+      summary: Get restaurant details by ID
+      tags:
+      - 🛒 Shopping
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Restaurant data retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  vendor:
+                    $ref: '#/components/schemas/Vendor'
+        '404':
+          description: Vendor information not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
 components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+
   schemas:
     Vendor:
       type: object
@@ -155,13 +670,13 @@ components:
         rating:
           type: number
       required:
-        - name
-        - ownerName
-        - pinCode
-        - address
-        - phone
-        - email
-        - serviceAvailable
+      - name
+      - ownerName
+      - pinCode
+      - address
+      - phone
+      - email
+      - serviceAvailable
     CreateVendorInput:
       type: object
       properties:
@@ -184,10 +699,73 @@ components:
         password:
           type: string
       required:
-        - name
-        - ownerName
-        - pinCode
-        - address
-        - phone
-        - email
-        - password
+      - name
+      - ownerName
+      - pinCode
+      - address
+      - phone
+      - email
+      - password
+    VendorLoginInput:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      required:
+      - email
+      - password
+    VendorUpdateInput:
+      type: object
+      properties:
+        name:
+          type: string
+        address:
+          type: string
+        phone:
+          type: string
+        foodTypes:
+          type: array
+          items:
+            type: string
+    CreateFoodInput:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+        foodType:
+          type: string
+        readyTime:
+          type: number
+        price:
+          type: number
+        images:
+          type: array
+          items:
+            type: string
+            format: binary
+          description: Array of image files to upload
+    Food:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+        foodType:
+          type: string
+        readyTime:
+          type: number
+        price:
+          type: number
+        images:
+          type: array
+          items:
+            type: string

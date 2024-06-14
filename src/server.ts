@@ -31,9 +31,6 @@ app.use(
   "/api/docs",
   swaggerUi.serve,
   swaggerUi.setup(swaggerDocument, {
-    swaggerOptions: {
-      docExpansion: "none",
-    },
     customSiteTitle: "Food Fusion Api Documentation",
   })
 );
