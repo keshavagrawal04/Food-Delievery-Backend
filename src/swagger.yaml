@@ -444,7 +444,7 @@ paths:
                   message:
                     type: string
   # Shopping - Checks Vendor Availability
-  /:pincode:
+  /{pincode}:
     get:
       summary: Get available vendors by pincode
       tags:
