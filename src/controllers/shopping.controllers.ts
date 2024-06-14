@@ -70,7 +70,7 @@ export const searchFoods = async (req: Request, res: Response) => {
   try {
     const { pincode: pinCode } = req.params;
 
-    const vendors = await vendorServices.findTopVendors(pinCode);
+    const vendors = await vendorServices.searchFoods(pinCode);
 
     const foods: any = [];
     vendors.map((vendor) => {
@@ -91,6 +91,17 @@ export const searchFoods = async (req: Request, res: Response) => {
 
 export const getRestaurantById = async (req: Request, res: Response) => {
   try {
+    const { id } = req.params;
+
+    const vendor = await vendorServices.findVendorById(id);
+
+    if (!vendor)
+      return res.status(404).json({ message: "Vendor Information Not Found" });
+
+    return res.status(200).json({
+      message: "Vendor Data Retrieved Successfully",
+      vendor,
+    });
   } catch (error: any) {
     console.log(error.message);
     return res

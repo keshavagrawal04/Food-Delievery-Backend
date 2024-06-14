@@ -19,6 +19,7 @@ export const findVendorByPincode = async (pinCode: string) => {
     throw error;
   }
 };
+
 export const findTopVendors = async (pinCode: string) => {
   try {
     const vendors = await Vendor.find({
@@ -37,6 +38,15 @@ export const findFoodsIn30Mins = async (pinCode: string) => {
     const vendors = await Vendor.find({
       pinCode,
     }).populate("foods");
+    return vendors;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const searchFoods = async (pinCode: string) => {
+  try {
+    const vendors = await Vendor.find({ pinCode }).populate("foods");
     return vendors;
   } catch (error) {
     throw error;

@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  title: Food Delivery API
+  title: Food Fusion API
   description: API documentation for the Food Delivery application.
   version: 1.0.0
 servers:
@@ -9,24 +9,185 @@ servers:
   - url: ${{server}}
     description: Production server
 paths:
-  /vendor/login:
+  /admin/vendor:
     post:
-      summary: Vendor login
       tags:
-        - Vendor
+        - Admin
+      summary: Create a new vendor
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                email:
-                  type: string
-                password:
-                  type: string
+              $ref: "#/components/schemas/CreateVendorInput"
+      responses:
+        "201":
+          description: Vendor created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  createdVendor:
+                    $ref: "#/components/schemas/Vendor"
+        "400":
+          description: Vendor with this email already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  error:
+                    type: string
+  /admin/vendors:
+    get:
+      tags:
+        - Admin
+      summary: Retrieve all vendors
       responses:
         "200":
-          description: Successful login
-        "401":
-          description: Unauthorized
+          description: Vendors data retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  vendors:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Vendor"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  error:
+                    type: string
+  /admin/vendor/{id}:
+    get:
+      tags:
+        - Admin
+      summary: Retrieve a vendor by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Vendor data retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  vendor:
+                    $ref: "#/components/schemas/Vendor"
+        "404":
+          description: Vendor not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  error:
+                    type: string
+components:
+  schemas:
+    Vendor:
+      type: object
+      properties:
+        name:
+          type: string
+        ownerName:
+          type: string
+        foodTypes:
+          type: array
+          items:
+            type: string
+        pinCode:
+          type: string
+        address:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        serviceAvailable:
+          type: boolean
+        coverImages:
+          type: array
+          items:
+            type: string
+        rating:
+          type: number
+      required:
+        - name
+        - ownerName
+        - pinCode
+        - address
+        - phone
+        - email
+        - serviceAvailable
+    CreateVendorInput:
+      type: object
+      properties:
+        name:
+          type: string
+        ownerName:
+          type: string
+        foodTypes:
+          type: array
+          items:
+            type: string
+        pinCode:
+          type: string
+        address:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+      required:
+        - name
+        - ownerName
+        - pinCode
+        - address
+        - phone
+        - email
+        - password
