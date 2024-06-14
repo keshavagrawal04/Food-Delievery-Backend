@@ -1,12 +1,15 @@
 import express from "express";
 import cors from "cors";
 import fs from "fs";
+import path from "path";
 import YAML from "yaml";
 import { adminRoutes, shoppingRoutes, vendorRoutes } from "./routes";
 import { database } from "./utils";
 import swaggerUi from "swagger-ui-express";
-console.log(__dirname);
-const file = fs.readFileSync("./swagger.yaml", "utf8");
+
+const swaggerPath = path.resolve(__dirname, "swagger.yaml");
+
+const file = fs.readFileSync(swaggerPath, "utf8");
 const swaggerDocument = YAML.parse(
   file?.replace(
     "- url: ${{server}}",
