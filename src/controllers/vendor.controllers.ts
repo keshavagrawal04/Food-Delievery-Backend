@@ -111,11 +111,15 @@ export const updateVendorCoverImages = async (
       return res.status(404).json({ message: "Vendor Information Not Found" });
 
     const files = req.files as [Express.Multer.File];
-    const images = files.map((file: Express.Multer.File) => file.filename);
+    const paths = files.map((file: Express.Multer.File) => file.path);
+    const uploadPromises = paths.map((path) => cloudinary.upload(path));
+    const imagesObj = await Promise.all(uploadPromises);
+    const images = imagesObj.map((image) => image?.url);
 
-    existingVendor.coverImages.push(...images);
-
-    const vendor = await existingVendor.save();
+    const vendor = await vendorServices.updateCoverImages(
+      images,
+      user.vendorId
+    );
 
     return res
       .status(200)
@@ -173,8 +177,9 @@ export const addFood = async (req: vendorDto.VendorRequest, res: Response) => {
     const files = req.files as [Express.Multer.File];
     const paths = files.map((file: Express.Multer.File) => file.path);
     const uploadPromises = paths.map((path) => cloudinary.upload(path));
-    const images = await Promise.all(uploadPromises);
-  
+    const imagesObj = await Promise.all(uploadPromises);
+    const images = imagesObj.map((image) => image?.url);
+
     const food = await foodServices.saveFood(
       user.vendorId,
       { ...foodDetails, images },

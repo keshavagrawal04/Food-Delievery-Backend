@@ -9,6 +9,18 @@ export const findVendorByEmail = async (email: string) => {
   }
 };
 
+export const updateCoverImages = async (images: any, id: any) => {
+  try {
+    const vendor = await Vendor.findByIdAndUpdate(
+      { _id: id },
+      { coverImages: images }
+    );
+    return vendor;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const findVendorByPincode = async (pinCode: string) => {
   try {
     const vendors = await Vendor.find({ pinCode })
