@@ -7,7 +7,7 @@ import { adminRoutes, shoppingRoutes, vendorRoutes } from "./routes";
 import { database } from "./utils";
 import swaggerUi from "swagger-ui-express";
 
-const swaggerPath = path.resolve(__dirname, "swagger.yaml");
+const swaggerPath = path.join(__dirname, "../src/swagger.yaml");
 
 const file = fs.readFileSync(swaggerPath, "utf8");
 const swaggerDocument = YAML.parse(
