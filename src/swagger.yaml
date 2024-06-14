@@ -8,3 +8,25 @@ servers:
     description: Local server
   - url: ${{server}}
     description: Production server
+paths:
+  /vendor/login:
+    post:
+      summary: Vendor login
+      tags:
+        - Vendor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        "200":
+          description: Successful login
+        "401":
+          description: Unauthorized
