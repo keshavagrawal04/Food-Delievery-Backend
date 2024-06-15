@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { foodDto, vendorDto } from "../dto";
+import { foodDto, authDto, vendorDto } from "../dto";
 import { vendorServices, foodServices } from "../services";
 import { cloudinary, crypto, jwt } from "../utils";
 
@@ -23,7 +23,7 @@ export const vendorLogin = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Password Mismatch" });
 
     const tokens = jwt.generateTokens({
-      vendorId: vendor._id,
+      _id: vendor._id,
       email: vendor.email,
     });
 
@@ -41,7 +41,7 @@ export const vendorLogin = async (req: Request, res: Response) => {
 };
 
 export const getVendorProfile = async (
-  req: vendorDto.VendorRequest,
+  req: authDto.CustomAuthRequest,
   res: Response
 ) => {
   try {
@@ -49,7 +49,7 @@ export const getVendorProfile = async (
 
     if (!user) return res.status(404).json({ message: "Unauthorized User" });
 
-    const vendor = await vendorServices.findVendorById(user.vendorId);
+    const vendor = await vendorServices.findVendorById(user._id);
 
     if (!vendor)
       return res.status(404).json({ message: "Vendor Information Not Found" });
@@ -66,7 +66,7 @@ export const getVendorProfile = async (
 };
 
 export const updateVendorProfile = async (
-  req: vendorDto.VendorRequest,
+  req: authDto.CustomAuthRequest,
   res: Response
 ) => {
   try {
@@ -75,19 +75,16 @@ export const updateVendorProfile = async (
 
     if (!user) return res.status(404).json({ message: "Unauthorized User" });
 
-    const existingVendor = await vendorServices.findVendorById(user.vendorId);
+    const existingVendor = await vendorServices.findVendorById(user._id);
 
     if (!existingVendor)
       return res.status(404).json({ message: "Vendor Information Not Found" });
 
-    const vendor = await vendorServices.updateVendorProfile(
-      user.vendorId,
-      body
-    );
+    const vendor = await vendorServices.updateVendorProfile(user._id, body);
 
     return res
       .status(200)
-      .json({ message: "Vendor Profile Updated Successfully" });
+      .json({ message: "Vendor Profile Updated Successfully", vendor });
   } catch (error: any) {
     console.log(error.message);
     return res
@@ -97,7 +94,7 @@ export const updateVendorProfile = async (
 };
 
 export const updateVendorCoverImages = async (
-  req: vendorDto.VendorRequest,
+  req: authDto.CustomAuthRequest,
   res: Response
 ) => {
   try {
@@ -105,7 +102,7 @@ export const updateVendorCoverImages = async (
 
     if (!user) return res.status(404).json({ message: "Unauthorized User" });
 
-    const existingVendor = await vendorServices.findVendorById(user.vendorId);
+    const existingVendor = await vendorServices.findVendorById(user._id);
 
     if (!existingVendor)
       return res.status(404).json({ message: "Vendor Information Not Found" });
@@ -116,10 +113,7 @@ export const updateVendorCoverImages = async (
     const imagesObj = await Promise.all(uploadPromises);
     const images = imagesObj.map((image) => image?.url);
 
-    const vendor = await vendorServices.updateCoverImages(
-      images,
-      user.vendorId
-    );
+    const vendor = await vendorServices.updateCoverImages(images, user._id);
 
     return res
       .status(200)
@@ -133,7 +127,7 @@ export const updateVendorCoverImages = async (
 };
 
 export const updateVendorService = async (
-  req: vendorDto.VendorRequest,
+  req: authDto.CustomAuthRequest,
   res: Response
 ) => {
   try {
@@ -141,13 +135,13 @@ export const updateVendorService = async (
 
     if (!user) return res.status(404).json({ message: "Unauthorized User" });
 
-    const existingVendor = await vendorServices.findVendorById(user.vendorId);
+    const existingVendor = await vendorServices.findVendorById(user._id);
 
     if (!existingVendor)
       return res.status(404).json({ message: "Vendor Information Not Found" });
 
     const vendor = await vendorServices.updateVendorService(
-      user.vendorId,
+      user._id,
       existingVendor.serviceAvailable
     );
 
@@ -162,14 +156,17 @@ export const updateVendorService = async (
   }
 };
 
-export const addFood = async (req: vendorDto.VendorRequest, res: Response) => {
+export const addFood = async (
+  req: authDto.CustomAuthRequest,
+  res: Response
+) => {
   try {
     const user = req.user;
     const foodDetails = <foodDto.CreateFoodInput>req.body;
 
     if (!user) return res.status(404).json({ message: "Unauthorized User" });
 
-    const vendor = await vendorServices.findVendorById(user.vendorId);
+    const vendor = await vendorServices.findVendorById(user._id);
 
     if (!vendor)
       return res.status(404).json({ message: "Vendor Information Not Found" });
@@ -181,7 +178,7 @@ export const addFood = async (req: vendorDto.VendorRequest, res: Response) => {
     const images = imagesObj.map((image) => image?.url);
 
     const food = await foodServices.saveFood(
-      user.vendorId,
+      user._id,
       { ...foodDetails, images },
       vendor
     );
@@ -196,7 +193,7 @@ export const addFood = async (req: vendorDto.VendorRequest, res: Response) => {
 };
 
 export const getAllFoods = async (
-  req: vendorDto.VendorRequest,
+  req: authDto.CustomAuthRequest,
   res: Response
 ) => {
   try {
@@ -204,12 +201,12 @@ export const getAllFoods = async (
 
     if (!user) return res.status(404).json({ message: "Unauthorized User" });
 
-    const vendor = await vendorServices.findVendorById(user.vendorId);
+    const vendor = await vendorServices.findVendorById(user._id);
 
     if (!vendor)
       return res.status(404).json({ message: "Vendor Information Not Found" });
 
-    const foods = await foodServices.findFoodsByVendorId(user.vendorId);
+    const foods = await foodServices.findFoodsByVendorId(user._id);
 
     return res
       .status(200)

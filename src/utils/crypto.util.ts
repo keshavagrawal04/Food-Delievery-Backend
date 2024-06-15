@@ -14,6 +14,17 @@ export const generateHash = (
   }
 };
 
+export const generateOtp = async () => {
+  try {
+    const otp = Math.floor(100000 + Math.random() * 900000);
+    let otpExpiry = new Date();
+    otpExpiry.setTime(new Date().getTime() + 30 * 60 * 1000);
+    return { otp, otpExpiry };
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const isHashValid = async (
   password: string,
   salt: string,

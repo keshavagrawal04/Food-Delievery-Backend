@@ -634,14 +634,15 @@ paths:
                 properties:
                   message:
                     type: string
-
+# Components
 components:
   securitySchemes:
     BearerAuth:
       type: http
       scheme: bearer
-
+  # Schema
   schemas:
+    # Vendor Schema
     Vendor:
       type: object
       properties:
@@ -677,6 +678,7 @@ components:
       - phone
       - email
       - serviceAvailable
+    # Create Vendor Schema
     CreateVendorInput:
       type: object
       properties:
@@ -706,6 +708,7 @@ components:
       - phone
       - email
       - password
+    # Vendor Login Schema
     VendorLoginInput:
       type: object
       properties:
@@ -716,6 +719,7 @@ components:
       required:
       - email
       - password
+    # Vendor Update Schema
     VendorUpdateInput:
       type: object
       properties:
@@ -729,6 +733,7 @@ components:
           type: array
           items:
             type: string
+    # Create Food Schema
     CreateFoodInput:
       type: object
       properties:
@@ -750,6 +755,7 @@ components:
             type: string
             format: binary
           description: Array of image files to upload
+    # Food Schema
     Food:
       type: object
       properties:
@@ -769,3 +775,51 @@ components:
           type: array
           items:
             type: string
+    # Customer Schema  
+    Customer:
+      type: object
+      properties:
+        email:
+          type: string;
+        phone:
+          type: string;
+        firstName:
+          type: string;
+        lastName:
+          type: string;
+        address:
+          type: string;
+        verified:
+          type: boolean;
+        lat:
+          type: number;
+        lan:
+          type: number;
+    # Customer Add Schema  
+    CustomerAddInput:
+      type: object
+      properties:
+        email:
+          type: string;
+        phone:
+          type: string;
+        password:
+          type: string;
+      required:
+      - email
+      - phone
+      - password
+    # Customer Update Schema  
+    CustomerUpdateInput:
+      type: object
+      properties:
+        firstName:
+          type: string;
+        lastName:
+          type: string;
+        address:
+          type: string;
+      required:
+      - firstName
+      - lastName
+      - address

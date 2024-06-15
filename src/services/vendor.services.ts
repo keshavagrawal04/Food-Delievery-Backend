@@ -13,7 +13,10 @@ export const updateCoverImages = async (images: any, id: any) => {
   try {
     const vendor = await Vendor.findByIdAndUpdate(
       { _id: id },
-      { coverImages: images }
+      { coverImages: images },
+      {
+        new: true,
+      }
     );
     return vendor;
   } catch (error) {
@@ -76,7 +79,9 @@ export const findVendorById = async (id: string) => {
 
 export const updateVendorProfile = async (id: string, body: any) => {
   try {
-    const vendor = await Vendor.findOneAndUpdate({ _id: id }, body);
+    const vendor = await Vendor.findOneAndUpdate({ _id: id }, body, {
+      new: true,
+    });
     return vendor;
   } catch (error) {
     throw error;
@@ -90,7 +95,10 @@ export const updateVendorService = async (
   try {
     const vendor = await Vendor.findOneAndUpdate(
       { _id: id },
-      { serviceAvailable: !serviceAvailability }
+      { serviceAvailable: !serviceAvailability },
+      {
+        new: true,
+      }
     );
     return vendor;
   } catch (error) {

@@ -23,3 +23,15 @@ export const findFoodsByVendorId = async (vendorId: string) => {
     throw error;
   }
 };
+
+export const findFoodsById = async (cart: any) => {
+  try {
+    const foods = await Food.find()
+      .where("_id")
+      .in(cart.map((item: { _id: any }) => item._id))
+      .exec();
+    return foods;
+  } catch (error) {
+    throw error;
+  }
+};

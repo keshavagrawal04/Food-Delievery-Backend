@@ -3,7 +3,12 @@ import cors from "cors";
 import fs from "fs";
 import path from "path";
 import YAML from "yaml";
-import { adminRoutes, shoppingRoutes, vendorRoutes } from "./routes";
+import {
+  adminRoutes,
+  shoppingRoutes,
+  vendorRoutes,
+  customerRoutes,
+} from "./routes";
 import { database } from "./utils";
 import swaggerUi from "swagger-ui-express";
 
@@ -24,8 +29,9 @@ app.use(cors());
 database.connect();
 
 app.use("/", shoppingRoutes);
-app.use("/admin/", adminRoutes);
-app.use("/vendor/", vendorRoutes);
+app.use("/admin", adminRoutes);
+app.use("/vendor", vendorRoutes);
+app.use("/customer", customerRoutes);
 
 app.use(
   "/api/docs",

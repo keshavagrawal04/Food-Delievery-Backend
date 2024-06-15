@@ -1,6 +1,3 @@
-import { Request } from "express";
-import { AuthPayload } from "./auth.dto";
-
 export interface CreateVendorInput {
   name: string;
   ownerName: string;
@@ -25,10 +22,6 @@ export interface VendorUpdateInput {
 }
 
 export interface VendorPayload {
-  vendorId: string;
+  _id: string;
   email: string;
-}
-
-export interface VendorRequest extends Request {
-  user?: AuthPayload;
 }

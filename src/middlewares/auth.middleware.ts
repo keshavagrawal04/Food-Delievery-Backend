@@ -1,10 +1,10 @@
 import { Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import { vendorDto } from "../dto";
+import { authDto } from "../dto";
 import { AuthPayload } from "../dto/auth.dto";
 
 export const verifyToken = async (
-  req: vendorDto.VendorRequest,
+  req: authDto.CustomAuthRequest,
   res: Response,
   next: NextFunction
 ) => {
