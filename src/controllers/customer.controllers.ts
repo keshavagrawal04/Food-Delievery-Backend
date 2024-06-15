@@ -305,7 +305,10 @@ export const getOrders = async (
       if (profile)
         return res
           .status(200)
-          .json({ message: "Orders Retrieved Successfully" });
+          .json({
+            message: "Orders Retrieved Successfully",
+            orders: profile.orders,
+          });
       return res.status(200).json({ message: "Customer Not Found" });
     }
     return res.status(200).json({ message: "Unauthorized User" });

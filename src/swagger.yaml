@@ -715,7 +715,7 @@ paths:
       tags:
       - 🙋‍♂️ Customer
       security:
-      - bearerAuth: []
+      - BearerAuth: []
       requestBody:
         required: true
         content:
@@ -742,7 +742,7 @@ paths:
       tags:
       - 🙋‍♂️ Customer
       security:
-      - bearerAuth: []
+      - BearerAuth: []
       responses:
         '200':
           description: OTP sent to the registered number
@@ -757,7 +757,7 @@ paths:
       tags:
       - 🙋‍♂️ Customer
       security:
-      - bearerAuth: []
+      - BearerAuth: []
       responses:
         '200':
           description: Customer profile retrieved successfully
@@ -780,7 +780,7 @@ paths:
       tags:
       - 🙋‍♂️ Customer
       security:
-      - bearerAuth: []
+      - BearerAuth: []
       requestBody:
         required: true
         content:
@@ -811,7 +811,7 @@ paths:
       tags:
       - 🙋‍♂️ Customer
       security:
-      - bearerAuth: []
+      - BearerAuth: []
       requestBody:
         required: true
         content:
@@ -846,6 +846,32 @@ paths:
       responses:
         '200':
           description: Orders retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Orders Retrieved Successfully
+                  orders:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Order'
+              example:
+                message: Orders Retrieved Successfully
+                orders:
+                - _id: "666d52b24edce4a55e3811d9"
+                  orderId: "36488"
+                  items:
+                  - food: "666c105394ef36a35a9b539b"
+                    unit: 2
+                    _id: "666d52b34edce4a55e3811da"
+                  totalAmount: 100
+                  orderDate: "2024-06-15T08:37:06.990Z"
+                  paymentMethod: "COD"
+                  paymentResponse: false
+                  orderStatus: "Waiting"
         '400':
           description: Unauthorized user or Customer not found
         '500':
@@ -857,7 +883,7 @@ paths:
       tags:
       - 🙋‍♂️ Customer
       security:
-      - bearerAuth: []
+      - BearerAuth: []
       parameters:
       - in: path
         name: id
